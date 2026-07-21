@@ -63,7 +63,7 @@ const Navbar = () => {
             </NavLink>
           ))}
           <a
-            href={import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174/login'}
+            href={import.meta.env.VITE_ADMIN_URL || 'http://localhost:5175/'}
             target="_blank"
             rel="noopener noreferrer"
             className="ml-1 px-3 py-2 rounded-lg text-sm font-medium text-ink-secondary hover:text-ink hover:bg-surface-100 transition-colors"
@@ -190,7 +190,7 @@ const Navbar = () => {
                 </NavLink>
               ))}
               <a
-                href={import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174/login'}
+                href={import.meta.env.VITE_ADMIN_URL || 'http://localhost:5175/'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-3 rounded-xl text-sm font-medium text-ink-secondary hover:text-ink hover:bg-surface-100 transition-colors"
