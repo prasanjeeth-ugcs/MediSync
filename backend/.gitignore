@@ -25,3 +25,8 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+
+# Seed & utility scripts (local use only)
+seedDoctors.js
+seedMore.js
+updateImages.js
