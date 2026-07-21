@@ -19,8 +19,7 @@ const port = 4000;
 // CORS configuration
 app.use(cors({
   origin: [
-    'https://medimind-frontend-three.vercel.app',
-    'https://medimind-admin-green.vercel.app',
+    
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:5175',
