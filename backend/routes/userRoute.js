@@ -1,0 +1,37 @@
+import express from 'express';
+import { 
+    registerUser, 
+    loginUser, 
+    getProfile, 
+    updateProfile,
+    bookAppointment,
+    listAppointment,
+    cancelAppointment,
+    createStripeSession,
+    verifyStripe,
+    diseasePrediction,
+    getAppointmentById
+} from '../controllers/userController.js';
+import userAuth from '../middleware/authUser.js';
+import { upload } from '../middleware/multer.js';
+
+const userRouter = express.Router();
+
+// PUBLIC
+userRouter.post('/register', registerUser);
+userRouter.post('/login', loginUser);
+userRouter.get("/verifystripe", verifyStripe);
+
+// PROTECTED
+userRouter.use(userAuth);
+
+userRouter.get('/get-profile', getProfile);
+userRouter.post('/update-profile', upload.single('image'), updateProfile);
+userRouter.post('/book-appointment', bookAppointment);
+userRouter.get('/appointments', listAppointment);
+userRouter.get('/appointment/:id', getAppointmentById);
+userRouter.post('/cancel-appointment/:id', cancelAppointment);
+userRouter.post("/create-stripe-session", createStripeSession);
+userRouter.post('/disease-prediction', upload.single('image'), diseasePrediction);
+
+export default userRouter;

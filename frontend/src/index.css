@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Theme variables ─────────────────────────────────────── */
+:root {
+  --color-surface:     #ffffff;
+  --color-surface-50:  #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+
+  --color-ink:           #0f172a;
+  --color-ink-secondary: #475569;
+  --color-ink-muted:     #94a3b8;
+  --color-ink-faint:     #cbd5e1;
+}
+
+/* Dark mode — toggled by adding class="dark" to <html> */
+html.dark {
+  --color-surface:     #0f172a;
+  --color-surface-50:  #020617;
+  --color-surface-100: #0f172a;
+  --color-surface-200: #1e293b;
+  --color-surface-300: #334155;
+
+  --color-ink:           #f8fafc;
+  --color-ink-secondary: #cbd5e1;
+  --color-ink-muted:     #64748b;
+  --color-ink-faint:     #334155;
+}
+
+body {
+  background-color: var(--color-surface-50);
+  color: var(--color-ink);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    @apply font-sans;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* ─── Buttons ─── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-xl transition-all duration-150
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white shadow-sm px-5 py-2.5 text-sm;
+  }
+  .btn-secondary {
+    @apply btn bg-surface hover:bg-surface-100 active:bg-surface-200 text-ink border border-surface-200 shadow-card px-5 py-2.5 text-sm;
+  }
+  .btn-ghost {
+    @apply btn hover:bg-surface-100 text-ink-secondary px-4 py-2 text-sm;
+  }
+  .btn-lg {
+    @apply px-7 py-3.5 text-base rounded-2xl;
+  }
+  .btn-danger {
+    @apply btn bg-red-50 hover:bg-red-100 text-danger border border-red-200 px-5 py-2.5 text-sm;
+  }
+
+  /* ─── Cards ─── */
+  .card {
+    @apply bg-surface rounded-2xl border border-surface-200 shadow-card;
+  }
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:border-brand-200 transition-all duration-150 cursor-pointer;
+  }
+
+  /* ─── Form inputs ─── */
+  .input {
+    @apply w-full bg-surface border border-surface-200 rounded-xl px-4 py-2.5 text-sm text-ink placeholder-ink-muted
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all;
+  }
+  .label {
+    @apply block text-sm font-medium text-ink-secondary mb-1.5;
+  }
+
+  /* ─── Badges ─── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-brand   { @apply badge bg-brand-50 text-brand-700; }
+  .badge-success { @apply badge bg-emerald-50 text-emerald-700; }
+  .badge-warning { @apply badge bg-amber-50 text-amber-700; }
+  .badge-danger  { @apply badge bg-red-50 text-red-600; }
+
+  /* ─── Misc ─── */
+  .divider      { @apply border-t border-surface-200; }
+  .section-label { @apply text-xs font-semibold uppercase tracking-widest text-ink-muted; }
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ─── Dark mode overrides ─────────────────────────────────── */
+html.dark .bg-surface        { background-color: #0f172a !important; }
+html.dark .bg-surface-50     { background-color: #020617 !important; }
+html.dark .bg-surface-100    { background-color: #0f172a !important; }
+html.dark .bg-surface-200    { background-color: #1e293b !important; }
+html.dark .bg-surface-300    { background-color: #334155 !important; }
+
+html.dark .text-ink           { color: #f8fafc !important; }
+html.dark .text-ink-secondary { color: #cbd5e1 !important; }
+html.dark .text-ink-muted     { color: #64748b !important; }
+html.dark .text-ink-faint     { color: #334155 !important; }
+
+html.dark .border-surface-200 { border-color: #1e293b !important; }
+html.dark .border-surface-100 { border-color: #0f172a !important; }
+html.dark .border-surface-300 { border-color: #334155 !important; }
+
+html.dark .placeholder-ink-muted::placeholder { color: #64748b !important; }
+html.dark .divider { border-color: #1e293b !important; }
+
+/* ─── Smooth color transitions ────────────────────────────── */
+*, *::before, *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+button, a, input, textarea, select { transition: unset; }
