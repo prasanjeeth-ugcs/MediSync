@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import Spinner from '../../components/Spinner';
 import { DoctorContext } from '../../context/Doctorcontext';
+import { CalendarDays, Users, BadgeDollarSign, Clock } from 'lucide-react';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
@@ -14,8 +15,7 @@ const DoctorDashboard = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      setLoading(true);
-      setError('');
+      setLoading(true); setError('');
       try {
         const { data } = await axios.get(`${backendUrl}/api/doctor/dashboard`, {
           headers: { Authorization: `Bearer ${dToken}` },
@@ -26,77 +26,73 @@ const DoctorDashboard = () => {
           patients: data.data?.totalPatients || 0,
         });
         setUpcoming(data.data?.upcomingAppointments || []);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch dashboard stats');
-      } finally {
-        setLoading(false);
-      }
+      } catch (err) { setError(err.response?.data?.message || 'Failed to fetch dashboard stats'); }
+      finally { setLoading(false); }
     };
-    if (!dToken) return;
-
-    fetchStats();
+    if (dToken) fetchStats();
   }, [dToken]);
 
+  const statCards = [
+    { label: 'Appointments', value: stats.appointments, icon: CalendarDays, color: 'text-teal-600', bg: 'bg-teal-50' },
+    { label: 'Patients',     value: stats.patients,     icon: Users,        color: 'text-violet-600', bg: 'bg-violet-50' },
+    { label: 'Earnings',     value: `₹${Number(stats.earnings).toLocaleString('en-IN')}`, icon: BadgeDollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  ];
+
   return (
-    <div className="py-8 px-2 md:px-8 max-w-6xl mx-auto w-full">
-      <h1 className="text-3xl md:text-4xl font-extrabold text-black mb-8 tracking-tight">Doctor Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white border border-gray-200 p-8 text-center flex flex-col items-center">
-          <div className="text-2xl font-bold text-gray-700 mb-2">Appointments</div>
-          <div className="text-5xl font-extrabold text-black">{loading ? <Spinner /> : stats.appointments}</div>
-        </div>
-        <div className="bg-white border border-gray-200 p-8 text-center flex flex-col items-center">
-          <div className="text-2xl font-bold text-gray-700 mb-2">Patients</div>
-          <div className="text-5xl font-extrabold text-black">{loading ? <Spinner /> : stats.patients}</div>
-        </div>
-        <div className="bg-white border border-gray-200 p-8 text-center flex flex-col items-center">
-          <div className="text-2xl font-bold text-gray-700 mb-2">Earnings</div>
-          <div className="text-5xl font-extrabold text-black">{loading ? <Spinner /> : `₹${Number(stats.earnings).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}</div>
-        </div>
+    <div className="max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">My Dashboard</h1>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        {statCards.map(({ label, value, icon: Icon, color, bg }) => (
+          <div key={label} className="card p-5 flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-2xl ${bg} flex items-center justify-center flex-shrink-0`}>
+              <Icon size={22} className={color} />
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 font-medium">{label}</p>
+              <p className="text-2xl font-bold text-slate-900">{loading ? <Spinner /> : value}</p>
+            </div>
+          </div>
+        ))}
       </div>
-      <div className="flex flex-col md:flex-row gap-8 w-full">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Upcoming Appointments */}
-        <div className="flex-1 bg-white border border-gray-200 p-8 overflow-x-auto">
-          <h2 className="text-xl font-bold text-black mb-4">Upcoming Appointments</h2>
+        <div className="card p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock size={18} className="text-teal-600" />
+            <h2 className="text-base font-semibold text-slate-900">Upcoming Appointments</h2>
+          </div>
           {loading ? <Spinner /> : upcoming.length === 0 ? (
-            <div className="text-gray-500">No upcoming appointments.</div>
+            <p className="text-sm text-slate-400">No upcoming appointments.</p>
           ) : (
-            <table className="w-full min-w-[400px] text-left border-t border-gray-100">
-              <thead>
-                <tr className="text-gray-700 border-b">
-                  <th className="py-2">Patient</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {upcoming.slice(0, 3).map((app, idx) => (
-                  <tr key={idx} className="border-b last:border-0 hover:bg-gray-50 transition">
-                    <td className="py-2 font-medium text-gray-900 whitespace-nowrap">{app.patientName}</td>
-                    <td className="py-2 text-gray-700 whitespace-nowrap">{app.date}</td>
-                    <td className="py-2 text-gray-700 whitespace-nowrap">{app.time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="flex flex-col divide-y divide-slate-100">
+              {upcoming.slice(0, 4).map((app, idx) => (
+                <div key={idx} className="py-2.5 flex justify-between items-center">
+                  <span className="text-sm font-medium text-slate-800">{app.patientName || 'Patient'}</span>
+                  <span className="text-xs text-slate-500">{app.date} · {app.time}</span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-        {/* Welcome & Tips */}
-        <div className="flex-1 bg-white border border-gray-200 p-8 flex flex-col justify-between mt-8 md:mt-0">
-          <div>
-            <h2 className="text-xl font-bold text-black mb-4">Welcome to MediSync!</h2>
-            <p className="text-gray-700 mb-6">Manage your appointments, patients, and profile from this dashboard. Here are some quick tips to get started:</p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>Check your upcoming appointments and mark them as completed after each session.</li>
-              <li>Keep your profile updated so patients can find you easily.</li>
-              <li>Review your earnings and appointment stats regularly.</li>
-            </ul>
-          </div>
+
+        {/* Tips */}
+        <div className="card p-6">
+          <h2 className="text-base font-semibold text-slate-900 mb-3">Welcome to MediSync!</h2>
+          <p className="text-sm text-slate-500 mb-4">Manage your appointments, patients, and profile from this dashboard.</p>
+          <ul className="space-y-2 text-sm text-slate-500">
+            <li>• Mark appointments completed after each session.</li>
+            <li>• Keep your profile updated so patients can find you.</li>
+            <li>• Review your earnings and stats regularly.</li>
+          </ul>
         </div>
       </div>
-      {error && <div className="text-red-600 font-semibold text-center mt-6">{error}</div>}
+
+      {error && <div className="text-red-500 text-sm text-center bg-red-50 rounded-xl p-3 mt-6">{error}</div>}
     </div>
   );
 };
 
-export default DoctorDashboard; 
+export default DoctorDashboard;

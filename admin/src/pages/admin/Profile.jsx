@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AdminContext } from '../../context/Admincontext';
+import { User, Mail } from 'lucide-react';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 const Profile = () => {
   const { aToken } = useContext(AdminContext);
@@ -10,60 +13,50 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      setLoading(true);
-      setError('');
+      setLoading(true); setError('');
       try {
-        const { data } = await axios.get('https://MediSync-backend.vercel.app/api/admin/profile', {
+        const { data } = await axios.get(`${backendUrl}/api/admin/profile`, {
           headers: { Authorization: `Bearer ${aToken}` },
         });
-        setProfile({
-          fullName: data.name || 'Admin',
-          email: data.email || '',
-        });
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch profile');
-      } finally {
-        setLoading(false);
-      }
+        setProfile({ fullName: data.name || 'Admin', email: data.email || '' });
+      } catch (err) { setError(err.response?.data?.message || 'Failed to fetch profile'); }
+      finally { setLoading(false); }
     };
     fetchProfile();
   }, [aToken]);
 
   return (
-    <div className="p-2 sm:p-8 md:p-12 bg-white min-h-screen flex flex-col items-center">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-black mb-6 sm:mb-10">Profile</h1>
-        <div className="bg-white border border-gray-200 p-4 sm:p-10">
-          {loading ? (
-            <div className="text-center text-gray-700 font-bold">Loading...</div>
-          ) : error ? (
-            <div className="text-red-600 font-semibold text-center">{error}</div>
-          ) : (
-            <div className="flex flex-col gap-6 sm:gap-8">
-              <div className="flex flex-col gap-2">
-                <label className="text-black font-bold">Full Name</label>
-                <input
-                  name="fullName"
-                  value={profile.fullName}
-                  className="p-3 border border-gray-200 text-base bg-gray-100 cursor-not-allowed"
-                  disabled
-                />
+    <div className="max-w-lg mx-auto">
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">Admin Profile</h1>
+      <div className="card p-8">
+        {loading ? (
+          <div className="text-center text-slate-500 text-sm py-8">Loading…</div>
+        ) : error ? (
+          <div className="text-red-500 text-sm text-center bg-red-50 rounded-xl p-4">{error}</div>
+        ) : (
+          <div className="flex flex-col items-center gap-6">
+            <div className="w-20 h-20 rounded-3xl bg-teal-100 flex items-center justify-center">
+              <User size={36} className="text-teal-600" />
+            </div>
+
+            <div className="w-full flex flex-col gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Full Name</label>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-700">
+                  <User size={15} className="text-slate-400" /> {profile.fullName}
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-black font-bold">Email</label>
-                <input
-                  name="email"
-                  value={profile.email}
-                  className="p-3 border border-gray-200 text-base bg-gray-100 cursor-not-allowed"
-                  disabled
-                />
-              </div>
-              <div className="mt-4 text-center text-gray-500 font-medium">
-                Profile editing is not supported for this admin.
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-700">
+                  <Mail size={15} className="text-slate-400" /> {profile.email}
+                </div>
               </div>
             </div>
-          )}
-        </div>
+
+            <p className="text-xs text-slate-400 text-center">Profile editing is not supported for admin accounts.</p>
+          </div>
+        )}
       </div>
     </div>
   );
